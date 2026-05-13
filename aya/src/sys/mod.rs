@@ -28,38 +28,9 @@ use thiserror::Error;
 /// Test utilities for mocking BPF syscalls.
 ///
 /// This module is only available when the `test-utils` feature is enabled.
-/// It provides [`override_syscall`](test_utils::override_syscall) to intercept
-/// BPF syscalls in tests, allowing userspace code to be tested without a real
-/// kernel.
-///
-/// # Example
-///
-/// ```ignore
-/// use aya::sys::test_utils::{override_syscall, Syscall, bpf_cmd};
-///
-/// override_syscall(|call| match call {
-///     Syscall::Ebpf { cmd, attr } => {
-///         // Handle BPF syscalls
-///         Ok(0)
-///     }
-///     _ => Ok(0),
-/// });
-/// ```
 #[cfg(feature = "test-utils")]
 #[cfg_attr(docsrs, doc(cfg(feature = "test-utils")))]
-pub mod test_utils {
-    pub use aya_obj::generated::{bpf_attr, bpf_cmd};
-
-    pub use super::fake::override_syscall;
-    pub use super::{PerfEventIoctlRequest, SysResult, Syscall};
-
-    /// Returns the fake file descriptor value used internally by aya's test
-    /// infrastructure. Return this from your `override_syscall` handler for
-    /// syscalls that create FDs (e.g. `BPF_MAP_CREATE`).
-    pub const fn mock_fd() -> i64 {
-        crate::MockableFd::mock_signed_fd() as i64
-    }
-}
+pub mod test_utils;
 
 /// The result type for syscall operations.
 ///
